@@ -10,6 +10,12 @@ const Dancer = require('../lib/models/Dancer');
 const Competency = require('../lib/models/Competency');
 const Gig = require('../lib/models/Gig');
 
+// function compareId(a, b) {
+//   if(a._id < b._id) return 1;
+//   if(a._id > b._id) return -1;
+//   return 0;
+// }
+
 describe('app routes', () => {
   beforeAll(() => {
     connect();
@@ -18,7 +24,7 @@ describe('app routes', () => {
   let dancePerformances;
   let dancers;
   let competencies;
-  let gig;
+  let gigs;
   beforeEach(async() => {
     await mongoose.connection.dropDatabase();
     dances = await Dance.create([
@@ -48,10 +54,16 @@ describe('app routes', () => {
       { name: 'Joan Z' },
       { name: 'Scott T' }
     ]);
-    gig = await Gig.create({
-      name: 'Paganfaire 2020',
-      date: Date(2020, 3, 10)
-    });
+    gigs = await Gig.create([
+      {
+        name: 'Paganfaire 2020',
+        date: Date(2020, 3, 10)
+      },
+      {
+        name: 'Mayday 2020',
+        date: Date(2020, 5, 1)
+      },
+    ]);
     dancePerformances = await DancePerformance.create([
       {
         dance: dances[0].id,
@@ -63,7 +75,7 @@ describe('app routes', () => {
           dancers[4].id,
           dancers[5].id,
         ],
-        gig: gig.id
+        gig: gigs[0].id
       },
       {
         dance: dances[1].id,
@@ -77,7 +89,7 @@ describe('app routes', () => {
           dancers[6].id,
           dancers[7].id,
         ],
-        gig: gig.id
+        gig: gigs[0].id
       },
       {
         dance: dances[2].id,
@@ -87,7 +99,7 @@ describe('app routes', () => {
           dancers[2].id,
           dancers[3].id,
         ],
-        gig: gig.id
+        gig: gigs[0].id
       }
     ]);
   });
@@ -168,7 +180,7 @@ describe('app routes', () => {
   it('updates a dance by id', () => {
     return request(app)
       .patch(`/api/v1/dances/${dances[0].id}`)
-      .send({ name: 'Mrs. Casey\'s'})
+      .send({ name: 'Mrs. Casey\'s' })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
@@ -212,5 +224,150 @@ describe('app routes', () => {
       });
   });
 
+  it('gets all dancers', () => {
+    return request(app)
+      .get('/api/v1/dancers')
+      .then(res => {
+        dancers.forEach(dancer => {
+          expect(res.body).toContainEqual({
+            _id: dancer._id.toString(),
+            name: dancer.name,
+            competencies: [],
+            __v: 0,
+          });
+        });
+      });
+  });
+
+  it('gets a dancer by id', () => {
+    return request(app)
+      .get(`/api/v1/dancers/${dancers[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Ali M',
+          competencies: expect.any(Array),
+          __v: 0,
+        });
+      });
+  });
   
+  it('updates a dancer by id', () => {
+    return request(app)
+      .patch(`/api/v1/dancers/${dancers[0].id}`)
+      .send({ name: 'Dawn C' })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Dawn C',
+          competencies: expect.any(Array),
+          __v: 0,
+        });
+      });
+  });
+
+  it('deletes a dancer by id', () => {
+    return request(app)
+      .delete(`/api/v1/dancers/${dancers[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Ali M',
+          competencies: expect.any(Array),
+          __v: 0
+        });
+      });
+  });
+
+  it('creates a dance performance', () => {
+    return request(app)
+      .post('/api/v1/dance-performances')
+      .send({
+        dance: dances[0].id,
+        dancers: [
+          dancers[0].id,
+          dancers[1].id,
+          dancers[2].id,
+          dancers[3].id,
+          dancers[4].id,
+          dancers[5].id,
+        ],
+        gig: gigs[0].id
+      })
+      .then((res) => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          dance: dances[0].id,
+          dancers: [
+            dancers[0].id,
+            dancers[1].id,
+            dancers[2].id,
+            dancers[3].id,
+            dancers[4].id,
+            dancers[5].id,
+          ],
+          gig: gigs[0].id,
+          __v: 0
+        });
+      });
+  });
+
+  it('gets all dance performances', () => {
+    return request(app)
+      .get('/api/v1/dance-performances')
+      .then(res => {
+        dancePerformances.forEach(dancePerformance => {
+          expect(res.body).toContainEqual({
+            _id: dancePerformance._id.toString(),
+            dance: dancePerformance.dance.toString(),
+            dancers: dancePerformance.dancers.map(dancer => dancer.toString()),
+            gig: dancePerformance.gig.toString(),
+            __v: 0,
+          });
+        });
+      });
+  });
+
+  it('gets a dance performance by id', () => {
+    return request(app)
+      .get(`/api/v1/dance-performances/${dancePerformances[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: dancePerformances[0]._id.toString(),
+          dance: JSON.parse(JSON.stringify(dances[0])),
+          dancers: dancers.slice(0, 6).map(dancer => JSON.parse(JSON.stringify(dancer))),
+          gig: gigs[0].id,
+          __v: 0,
+        });
+      });
+  });
+  
+  it('updates a dance performance by id', () => {
+    return request(app)
+      .patch(`/api/v1/dance-performances/${dancePerformances[0].id}`)
+      .send({ gig: gigs[1]._id })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          dance: JSON.parse(JSON.stringify(dances[0])),
+          dancers: dancers.slice(0, 6).map(dancer => JSON.parse(JSON.stringify(dancer))),
+          gig: gigs[1].id,
+          __v: 0,
+        });
+      });
+  });
+
+  it('delete a dance performance by id', () => {
+    return request(app)
+      .delete(`/api/v1/dance-performances/${dancePerformances[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          dance: JSON.parse(JSON.stringify(dances[0])),
+          dancers: dancers.slice(0, 6).map(dancer => JSON.parse(JSON.stringify(dancer))),
+          gig: gigs[1].id,
+          __v: 0,
+        });
+      });
+  });
 });
