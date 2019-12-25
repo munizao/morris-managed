@@ -133,6 +133,23 @@ describe('app routes', () => {
       });
   });
 
+  it('gets all dances matching query', () => {
+    return request(app)
+      .get('/api/v1/dance?tradition=Bampton')
+      .then(res => {
+        expect(res.body).toEqual([
+          {
+            _id: dances[2]._id.toString(),
+            name: 'Simon\'s Fancy',
+            tradition: 'Bampton',
+            dancerQuantity: 4,
+            figures: expect.any(Array),
+            __v: 0,
+          }
+        ]);
+      });
+  });
+
   it('gets a dance by id', () => {
     return request(app)
       .get(`/api/v1/dance/${dances[0].id}`)
@@ -178,5 +195,4 @@ describe('app routes', () => {
         });
       });
   });
-
 });
