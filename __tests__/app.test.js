@@ -133,4 +133,50 @@ describe('app routes', () => {
       });
   });
 
+  it('gets a dance by id', () => {
+    return request(app)
+      .get(`/api/v1/dance/${dances[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Oak and Ash and Thorn',
+          figures: expect.any(Array),
+          tradition: 'Moulton',
+          dancerQuantity: 6,
+          __v: 0,
+        });
+      });
+  });
+
+  it('updates a dance by id', () => {
+    return request(app)
+      .patch(`/api/v1/dance/${dances[0].id}`)
+      .send({ name: 'Mrs. Casey\'s'})
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Mrs. Casey\'s',
+          figures: expect.any(Array),
+          tradition: 'Moulton',
+          dancerQuantity: 6,
+          __v: 0,
+        });
+      });
+  });
+
+  it('deletes a dance by id', () => {
+    return request(app)
+      .delete(`/api/v1/dance/${dances[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Oak and Ash and Thorn',
+          figures: expect.any(Array),
+          tradition: 'Moulton',
+          dancerQuantity: 6,
+          __v: 0
+        });
+      });
+  });
+
 });
