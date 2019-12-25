@@ -195,4 +195,22 @@ describe('app routes', () => {
         });
       });
   });
+
+  it('creates a dancer', () => {
+    return request(app)
+      .post('/api/v1/dancers')
+      .send({
+        name: 'Dawn C',
+      })
+      .then((res) => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Dawn C',
+          competencies: [],
+          __v: 0
+        });
+      });
+  });
+
+  
 });
