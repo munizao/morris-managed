@@ -49,7 +49,7 @@ describe('app routes', () => {
       { name: 'Scott T' }
     ]);
     gig = await Gig.create({
-      name: 'Paganfaire',
+      name: 'Paganfaire 2020',
       date: Date(2020, 3, 10)
     });
     dancePerformances = await DancePerformance.create([
@@ -98,7 +98,7 @@ describe('app routes', () => {
 
   it('creates a dance', () => {
     return request(app)
-      .post('/api/v1/dance')
+      .post('/api/v1/dances')
       .send({
         name: 'Vandals of Hammerwich',
         tradition: 'Litchfield',
@@ -118,7 +118,7 @@ describe('app routes', () => {
 
   it('gets all dances', () => {
     return request(app)
-      .get('/api/v1/dance')
+      .get('/api/v1/dances')
       .then(res => {
         dances.forEach(dance => {
           expect(res.body).toContainEqual({
@@ -135,7 +135,7 @@ describe('app routes', () => {
 
   it('gets all dances matching query', () => {
     return request(app)
-      .get('/api/v1/dance?tradition=Bampton')
+      .get('/api/v1/dances?tradition=Bampton')
       .then(res => {
         expect(res.body).toEqual([
           {
@@ -152,7 +152,7 @@ describe('app routes', () => {
 
   it('gets a dance by id', () => {
     return request(app)
-      .get(`/api/v1/dance/${dances[0].id}`)
+      .get(`/api/v1/dances/${dances[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
@@ -167,7 +167,7 @@ describe('app routes', () => {
 
   it('updates a dance by id', () => {
     return request(app)
-      .patch(`/api/v1/dance/${dances[0].id}`)
+      .patch(`/api/v1/dances/${dances[0].id}`)
       .send({ name: 'Mrs. Casey\'s'})
       .then(res => {
         expect(res.body).toEqual({
@@ -183,7 +183,7 @@ describe('app routes', () => {
 
   it('deletes a dance by id', () => {
     return request(app)
-      .delete(`/api/v1/dance/${dances[0].id}`)
+      .delete(`/api/v1/dances/${dances[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
