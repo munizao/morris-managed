@@ -12,11 +12,8 @@ describe('dance routes', () => {
     connect();
   });
   let dances;
-  let dancers;
-  let dancePerformances;
-  let gigs;
   beforeEach(async() => {
-    [dances, dancers, dancePerformances, gigs] = await testSetup();
+    [dances, , , ] = await testSetup();
   });
 
   afterAll(() => {
