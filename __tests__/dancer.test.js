@@ -33,6 +33,7 @@ describe('dancer routes', () => {
           _id: expect.any(String),
           name: 'Dawn C',
           competencies: [],
+          teams: [],
           __v: 0
         });
       });
@@ -47,6 +48,7 @@ describe('dancer routes', () => {
             _id: dancer._id.toString(),
             name: dancer.name,
             competencies: [],
+            teams: [],
             __v: 0,
           });
         });
@@ -61,6 +63,7 @@ describe('dancer routes', () => {
           _id: expect.any(String),
           name: 'Ali M',
           competencies: expect.any(Array),
+          teams: [],
           __v: 0,
         });
       });
@@ -75,6 +78,7 @@ describe('dancer routes', () => {
           _id: expect.any(String),
           name: 'Dawn C',
           competencies: expect.any(Array),
+          teams: [],
           __v: 0,
         });
       });
@@ -88,6 +92,7 @@ describe('dancer routes', () => {
           _id: expect.any(String),
           name: 'Ali M',
           competencies: expect.any(Array),
+          teams: [],
           __v: 0
         });
       });
