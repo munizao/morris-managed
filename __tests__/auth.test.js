@@ -5,7 +5,6 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const User = require('../lib/models/User');
-const Dance = require('../lib/models/Dance');
 
 describe('auth routes', () => {
   beforeAll(() => {
@@ -28,6 +27,7 @@ describe('auth routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           email: 'test@test.com',
+          role: 'dancer',
           __v: 0
         });
       });
@@ -41,6 +41,7 @@ describe('auth routes', () => {
         expect(res.body).toEqual({
           _id: user.id,
           email: 'test@test.com',
+          role: 'dancer',
           __v: 0
         });
       });
@@ -78,7 +79,8 @@ describe('auth routes', () => {
     await agent
       .post('/api/v1/auth/login')
       .send({
-        email: 'test@test.com', password: 'password'
+        email: 'test@test.com', 
+        password: 'password'
       });
 
     return agent
@@ -87,6 +89,7 @@ describe('auth routes', () => {
         expect(res.body).toEqual({
           _id: user.id,
           email: 'test@test.com',
+          role: 'dancer',
           __v: 0
         });
       });
