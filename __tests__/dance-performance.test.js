@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const { testSetup } = require('../test-setup/setup');
 
 
-describe('app routes', () => {
+describe('dance performance routes', () => {
   beforeAll(() => {
     connect();
   });
