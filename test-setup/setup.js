@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Dance = require('../lib/models/Dance');
 const DancePerformance = require('../lib/models/DancePerformance');
 const Dancer = require('../lib/models/Dancer');
-const Competency = require('../lib/models/Competency');
+// const Competency = require('../lib/models/Competency');
 const Gig = require('../lib/models/Gig');
 
 const testSetup = async() => {
