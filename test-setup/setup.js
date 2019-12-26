@@ -1,4 +1,3 @@
-const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const Dance = require('../lib/models/Dance');
 const DancePerformance = require('../lib/models/DancePerformance');
@@ -42,11 +41,11 @@ const testSetup = async() => {
   gigs = await Gig.create([
     {
       name: 'Paganfaire 2020',
-      date: Date(2020, 3, 10)
+      date: new Date(2020, 2, 10)
     },
     {
       name: 'Mayday 2020',
-      date: Date(2020, 5, 1)
+      date: new Date(2020, 4, 1)
     },
   ]);
   dancePerformances = await DancePerformance.create([
