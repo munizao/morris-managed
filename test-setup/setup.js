@@ -4,6 +4,8 @@ const DancePerformance = require('../lib/models/DancePerformance');
 const Dancer = require('../lib/models/Dancer');
 // const Competency = require('../lib/models/Competency');
 const Gig = require('../lib/models/Gig');
+const Team = require('../lib/models/Team');
+
 
 const testSetup = async() => {
   let dances;
@@ -86,7 +88,29 @@ const testSetup = async() => {
       gig: gigs[0].id
     }
   ]);
-  return [dances, dancers, dancePerformances, gigs];
+  const teams = await Team.create(
+    [
+      {
+        name: 'Bridgetown Morris Men',
+        dancers: [
+          dancers[0].id,
+          dancers[1].id,
+          dancers[2].id,
+          dancers[3].id,
+        ],
+      },
+      {
+        name: 'Renegade Rose Morris',
+        dancers: [
+          dancers[4].id,
+          dancers[5].id,
+          dancers[6].id,
+          dancers[7].id,
+        ],
+      }
+    ]
+  );
+  return [dances, dancers, dancePerformances, gigs, teams];
 };
 
 module.exports = { testSetup };
