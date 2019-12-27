@@ -5,6 +5,7 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const User = require('../lib/models/User');
+const Dancer = require('../lib/models/Dancer');
 
 describe('auth routes', () => {
   beforeAll(() => {
@@ -33,8 +34,25 @@ describe('auth routes', () => {
         });
       });
   });
+
+  it('signup route signs up a user with a new team', () => {
+    return request(app)
+      .post('/api/v1/auth/signup')
+      .send({ email: 'test@test.com', password: 'password', name: 'Ali M', newTeamName: 'Sound and Fury' })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          email: 'test@test.com',
+          dancer: expect.any(String),
+          role: 'dancer',
+          __v: 0
+        });
+      });
+  });
+
   it('login route logs in a user', async() => {
-    const user = await User.create({ email: 'test@test.com', password: 'password' });
+    const dancer = await Dancer.create({ name: 'Ali M' });
+    const user = await User.create({ email: 'test@test.com', password: 'password', dancer: dancer._id });
     return request(app)
       .post('/api/v1/auth/login')
       .send({ email: 'test@test.com', password: 'password' })
@@ -43,6 +61,7 @@ describe('auth routes', () => {
           _id: user.id,
           email: 'test@test.com',
           role: 'dancer',
+          dancer: dancer.id,
           __v: 0
         });
       });
@@ -59,7 +78,8 @@ describe('auth routes', () => {
       });
   });
   it('login route fails on wrong password', async() => {
-    await User.create({ email: 'test@test.com', password: 'password' });
+    const dancer = await Dancer.create({ name: 'Ali M' });
+    await User.create({ email: 'test@test.com', password: 'password', dancer: dancer._id });
     return request(app)
       .post('/api/v1/auth/login')
       .send({ email: 'test@test.com', password: 'badpassword' })
@@ -71,9 +91,12 @@ describe('auth routes', () => {
       });
   });
   it('verifies a user is logged in', async() => {
+    const dancer = await Dancer.create({ name: 'Ali M' });
+
     const user = await User.create({
       email: 'test@test.com',
-      password: 'password'
+      password: 'password',
+      dancer: dancer.id
     });
     const agent = request.agent(app);
 
