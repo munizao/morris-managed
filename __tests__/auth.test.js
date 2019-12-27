@@ -22,11 +22,12 @@ describe('auth routes', () => {
   it('signup route signs up a user', () => {
     return request(app)
       .post('/api/v1/auth/signup')
-      .send({ email: 'test@test.com', password: 'password' })
+      .send({ email: 'test@test.com', password: 'password', name: 'Ali M' })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           email: 'test@test.com',
+          dancer: expect.any(String),
           role: 'dancer',
           __v: 0
         });
