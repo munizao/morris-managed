@@ -12,16 +12,26 @@ describe('dance routes', () => {
     connect();
   });
   let dances;
+  let squireUser;
   beforeEach(async() => {
-    [dances, , , ] = await testSetup();
+    ({ dances, squireUser } = await testSetup());
   });
 
   afterAll(() => {
     return mongoose.connection.close();
   });
 
-  it('creates a dance', () => {
-    return request(app)
+  it('logged in squire creates a dance', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'squire@test.com', 
+        password: 'password'
+      });
+
+    return agent
       .post('/api/v1/dances')
       .send({
         name: 'Vandals of Hammerwich',
@@ -41,6 +51,7 @@ describe('dance routes', () => {
   });
 
   it('gets all dances', () => {
+
     return request(app)
       .get('/api/v1/dances')
       .then(res => {

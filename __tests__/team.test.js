@@ -13,7 +13,7 @@ describe('team routes', () => {
   });
   let teams;
   beforeEach(async() => {
-    [, , , , teams] = await testSetup();
+    ({ teams } = await testSetup());
   });
 
   afterAll(() => {

@@ -13,8 +13,9 @@ describe('gig routes', () => {
   });
   let dancers;
   let gigs;
+  let teams;
   beforeEach(async() => {
-    [, dancers, , gigs] = await testSetup();
+    ({ dancers, gigs, teams } = await testSetup());
   });
 
   afterAll(() => {
@@ -23,18 +24,29 @@ describe('gig routes', () => {
 
 
 
-  it('creates a gig', () => {
-    return request(app)
+  it('creates a gig', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'squire@test.com', 
+        password: 'password'
+      });
+
+    return agent
       .post('/api/v1/gigs')
       .send({
         name: 'Salem Worldbeat',
-        date: new Date(2020, 5, 20)
+        date: new Date(2020, 5, 20),
+        team: teams[0]._id
       })
       .then((res) => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'Salem Worldbeat',
           dancers: [],
+          team: teams[0]._id.toString(),
           date: new Date(2020, 5, 20).toISOString(),
           __v: 0
         });
@@ -51,6 +63,7 @@ describe('gig routes', () => {
             name: gig.name,
             date: gig.date.toISOString(),
             dancers: [],
+            team: gig.team.toString(),
             __v: 0,
           });
         });
@@ -66,6 +79,7 @@ describe('gig routes', () => {
           name: 'Paganfaire 2020',
           dancers: [],
           date: new Date(2020, 2, 10).toISOString(),
+          team: teams[0]._id.toString(),
           __v: 0,
         });
       });
@@ -81,6 +95,7 @@ describe('gig routes', () => {
           name: 'Equinox Ale',
           dancers: [],
           date: new Date(2020, 2, 10).toISOString(),
+          team: teams[0]._id.toString(),
           __v: 0,
         });
       });
@@ -95,6 +110,7 @@ describe('gig routes', () => {
           name: 'Paganfaire 2020',
           dancers: [],
           date: new Date(2020, 2, 10).toISOString(),
+          team: teams[0]._id.toString(),
           __v: 0
         });
       });

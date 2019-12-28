@@ -16,7 +16,7 @@ describe('dance performance routes', () => {
   let dancePerformances;
   let gigs;
   beforeEach(async() => {
-    [dances, dancers, dancePerformances, gigs] = await testSetup();
+    ({ dances, dancers, dancePerformances, gigs } = await testSetup());
   });
 
   afterAll(() => {

@@ -13,7 +13,7 @@ describe('dancer routes', () => {
   });
   let dancers;
   beforeEach(async() => {
-    [, dancers, , ] = await testSetup();
+    ({ dancers } = await testSetup());
   });
 
   afterAll(() => {
