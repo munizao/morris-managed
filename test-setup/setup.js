@@ -5,14 +5,25 @@ const Dancer = require('../lib/models/Dancer');
 // const Competency = require('../lib/models/Competency');
 const Gig = require('../lib/models/Gig');
 const Team = require('../lib/models/Team');
-
+const User = require('../lib/models/User');
 
 const testSetup = async() => {
   let dances;
   let dancers;
   let dancePerformances;
   let gigs;
+  let squireUser;
   await mongoose.connection.dropDatabase();
+  const squireDancer = await Dancer.create({
+    name: 'Will K'
+  });
+
+  squireUser = await User.create({
+    email: 'squire@test.com',
+    password: 'password',
+    role: 'squire',
+    dancer: squireDancer._id
+  });
   dances = await Dance.create([
     {
       name: 'Oak and Ash and Thorn',
@@ -40,14 +51,40 @@ const testSetup = async() => {
     { name: 'Joan Z' },
     { name: 'Scott T' }
   ]);
+  const teams = await Team.create(
+    [
+      {
+        squire: squireUser._id,
+        name: 'Bridgetown Morris Men',
+        dancers: [
+          dancers[0].id,
+          dancers[1].id,
+          dancers[2].id,
+          dancers[3].id,
+        ],
+      },
+      {
+        squire: squireUser._id,
+        name: 'Renegade Rose Morris',
+        dancers: [
+          dancers[4].id,
+          dancers[5].id,
+          dancers[6].id,
+          dancers[7].id,
+        ],
+      }
+    ]
+  );
   gigs = await Gig.create([
     {
       name: 'Paganfaire 2020',
-      date: new Date(2020, 2, 10)
+      date: new Date(2020, 2, 10),
+      team: teams[0]._id
     },
     {
       name: 'Mayday 2020',
-      date: new Date(2020, 4, 1)
+      date: new Date(2020, 4, 1),
+      team: teams[0]._id
     },
   ]);
   dancePerformances = await DancePerformance.create([
@@ -88,29 +125,8 @@ const testSetup = async() => {
       gig: gigs[0].id
     }
   ]);
-  const teams = await Team.create(
-    [
-      {
-        name: 'Bridgetown Morris Men',
-        dancers: [
-          dancers[0].id,
-          dancers[1].id,
-          dancers[2].id,
-          dancers[3].id,
-        ],
-      },
-      {
-        name: 'Renegade Rose Morris',
-        dancers: [
-          dancers[4].id,
-          dancers[5].id,
-          dancers[6].id,
-          dancers[7].id,
-        ],
-      }
-    ]
-  );
-  return [dances, dancers, dancePerformances, gigs, teams];
+
+  return { dances, dancers, dancePerformances, gigs, teams, squireUser };
 };
 
 module.exports = { testSetup };
