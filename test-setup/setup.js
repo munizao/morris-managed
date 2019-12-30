@@ -15,7 +15,7 @@ const testSetup = async() => {
   let squireUser;
   await mongoose.connection.dropDatabase();
   const squireDancer = await Dancer.create({
-    name: 'Will K'
+    name: 'Will K',
   });
 
   squireUser = await User.create({
@@ -57,6 +57,7 @@ const testSetup = async() => {
         squire: squireUser._id,
         name: 'Bridgetown Morris Men',
         dancers: [
+          squireDancer.id,
           dancers[0].id,
           dancers[1].id,
           dancers[2].id,
@@ -75,6 +76,7 @@ const testSetup = async() => {
       }
     ]
   );
+
   gigs = await Gig.create([
     {
       name: 'Paganfaire 2020',
