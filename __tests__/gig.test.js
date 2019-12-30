@@ -53,8 +53,17 @@ describe('gig routes', () => {
       });
   });
 
-  it('gets all gigs', () => {
-    return request(app)
+  it('gets all gigs for users teams', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'squire@test.com', 
+        password: 'password'
+      });
+
+    return agent
       .get('/api/v1/gigs')
       .then(res => {
         gigs.forEach(gig => {
