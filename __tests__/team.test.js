@@ -75,6 +75,7 @@ describe('team routes', () => {
           _id: expect.any(String),
           name: 'Portland Morris',
           dances: [],
+          squire: teams[0].squire._id,
           __v: 0,
         });
       });
@@ -88,6 +89,7 @@ describe('team routes', () => {
           _id: expect.any(String),
           name: 'Bridgetown Morris Men',
           dances: [],
+          squire: teams[0].squire._id,
           __v: 0
         });
       });
