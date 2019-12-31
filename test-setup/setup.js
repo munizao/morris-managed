@@ -110,7 +110,8 @@ const testSetup = async() => {
         dancers[4].id,
         dancers[5].id,
       ],
-      gig: gigs[0].id
+      gig: gigs[0].id,
+      team: teams[0]._id
     },
     {
       dance: dances[1].id,
@@ -124,7 +125,8 @@ const testSetup = async() => {
         dancers[6].id,
         dancers[7].id,
       ],
-      gig: gigs[0].id
+      gig: gigs[0].id,
+      team: teams[0]._id
     },
     {
       dance: dances[2].id,
@@ -134,9 +136,13 @@ const testSetup = async() => {
         dancers[2].id,
         dancers[3].id,
       ],
-      gig: gigs[0].id
+      gig: gigs[0].id,
+      team: teams[0]._id
     }
   ]);
+
+  dancers = await Promise.all(dancers.map((dancer) => Dancer.findById(dancer._id)));
+
   return { dances, dancers, dancePerformances, gigs, teams, squireUser, dancerUser };
 };
 
