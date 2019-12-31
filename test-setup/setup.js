@@ -13,8 +13,10 @@ const testSetup = async() => {
   let dancePerformances;
   let gigs;
   let squireUser;
+  let dancerUser;
+
   await mongoose.connection.dropDatabase();
-  const squireDancer = await Dancer.create({
+  const testDancer = await Dancer.create({
     name: 'Will K',
   });
 
@@ -22,8 +24,16 @@ const testSetup = async() => {
     email: 'squire@test.com',
     password: 'password',
     role: 'squire',
-    dancer: squireDancer._id
+    dancer: testDancer._id
   });
+
+  dancerUser = await User.create({
+    email: 'dancer@test.com',
+    password: 'password',
+    role: 'dancer',
+    dancer: testDancer._id
+  });
+
   dances = await Dance.create([
     {
       name: 'Oak and Ash and Thorn',
@@ -57,7 +67,7 @@ const testSetup = async() => {
         squire: squireUser._id,
         name: 'Bridgetown Morris Men',
         dancers: [
-          squireDancer.id,
+          testDancer.id,
           dancers[0].id,
           dancers[1].id,
           dancers[2].id,
@@ -127,8 +137,7 @@ const testSetup = async() => {
       gig: gigs[0].id
     }
   ]);
-
-  return { dances, dancers, dancePerformances, gigs, teams, squireUser };
+  return { dances, dancers, dancePerformances, gigs, teams, squireUser, dancerUser };
 };
 
 module.exports = { testSetup };
