@@ -125,7 +125,7 @@ describe('gig routes', () => {
         password: 'password'
       });
 
-    return await agent
+    return agent
       .get(`/api/v1/gigs/${gigs[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
@@ -161,7 +161,7 @@ describe('gig routes', () => {
         password: 'password'
       });
 
-    return await agent
+    return agent
       .patch(`/api/v1/gigs/${gigs[0].id}`)
       .send({ name: 'Equinox Ale' })
       .then(res => {
@@ -186,7 +186,7 @@ describe('gig routes', () => {
         password: 'password'
       });
 
-    return await agent
+    return agent
       .patch(`/api/v1/gigs/${gigs[0].id}`)
       .send({ name: 'Equinox Ale' })
       .then(res => {
@@ -207,7 +207,7 @@ describe('gig routes', () => {
         password: 'password'
       });
 
-    return await agent
+    return agent
       .delete(`/api/v1/gigs/${gigs[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
@@ -231,7 +231,7 @@ describe('gig routes', () => {
         password: 'password'
       });
 
-    return await agent
+    return agent
       .delete(`/api/v1/gigs/${gigs[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
