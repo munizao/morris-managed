@@ -24,7 +24,7 @@ describe('gig routes', () => {
 
 
 
-  it('creates a gig', async() => {
+  it('squire user creates a gig', async() => {
     const agent = request.agent(app);
 
     await agent
@@ -53,13 +53,38 @@ describe('gig routes', () => {
       });
   });
 
+  it('dancer user can\'t create a gig', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .post('/api/v1/gigs')
+      .send({
+        name: 'Salem Worldbeat',
+        date: new Date(2020, 5, 20),
+        team: teams[0]._id
+      })
+      .then((res) => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
   it('gets all gigs for users teams', async() => {
     const agent = request.agent(app);
 
     await agent
       .post('/api/v1/auth/login')
       .send({
-        email: 'squire@test.com', 
+        email: 'dancer@test.com', 
         password: 'password'
       });
 
@@ -79,8 +104,28 @@ describe('gig routes', () => {
       });
   });
 
-  it('gets a gig by id', () => {
+  it('can\'t get gigs for anonymous user', () => {
     return request(app)
+      .get('/api/v1/gigs')
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
+  it('gets a gig by id for user', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return await agent
       .get(`/api/v1/gigs/${gigs[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
@@ -93,9 +138,30 @@ describe('gig routes', () => {
         });
       });
   });
-  
-  it('updates a gig by id', () => {
+
+
+  it('can\'t get gig by id for anonymous user', () => {
     return request(app)
+      .get(`/api/v1/gigs/${gigs[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+  
+  it('squire can update a gig by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'squire@test.com', 
+        password: 'password'
+      });
+
+    return await agent
       .patch(`/api/v1/gigs/${gigs[0].id}`)
       .send({ name: 'Equinox Ale' })
       .then(res => {
@@ -110,8 +176,38 @@ describe('gig routes', () => {
       });
   });
 
-  it('deletes a gig by id', () => {
-    return request(app)
+  it('dancer can\'t update a gig by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return await agent
+      .patch(`/api/v1/gigs/${gigs[0].id}`)
+      .send({ name: 'Equinox Ale' })
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
+  it('squire can delete a gig by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'squire@test.com', 
+        password: 'password'
+      });
+
+    return await agent
       .delete(`/api/v1/gigs/${gigs[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
@@ -124,4 +220,25 @@ describe('gig routes', () => {
         });
       });
   });
+
+  it('dancer can\'t delete a gig by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return await agent
+      .delete(`/api/v1/gigs/${gigs[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
 });
