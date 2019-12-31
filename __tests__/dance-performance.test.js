@@ -5,9 +5,6 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const { testSetup } = require('../test-setup/setup');
-const Dancer = require('../lib/models/Dancer');
-
-
 
 describe('dance performance routes', () => {
   beforeAll(() => {
