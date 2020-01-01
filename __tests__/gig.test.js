@@ -24,7 +24,7 @@ describe('gig routes', () => {
 
 
 
-  it('squire user creates a gig', async() => {
+  it('squire user can create a gig', async() => {
     const agent = request.agent(app);
 
     await agent
@@ -49,6 +49,31 @@ describe('gig routes', () => {
           team: teams[0]._id.toString(),
           date: new Date(2020, 5, 20).toISOString(),
           __v: 0
+        });
+      });
+  });
+
+  it('squire user can\'t create a gig for a team they aren\'t squire of', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'squire@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .post('/api/v1/gigs')
+      .send({
+        name: 'Salem Worldbeat',
+        date: new Date(2020, 5, 20),
+        team: teams[1]._id
+      })
+      .then((res) => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
         });
       });
   });
