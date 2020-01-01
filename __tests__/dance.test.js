@@ -21,7 +21,7 @@ describe('dance routes', () => {
     return mongoose.connection.close();
   });
 
-  it('logged in squire creates a dance', async() => {
+  it('squire can create a dance', async() => {
     const agent = request.agent(app);
 
     await agent
@@ -50,7 +50,32 @@ describe('dance routes', () => {
       });
   });
 
-  it('gets all dances', () => {
+  it('dancer can\'t create a dance', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .post('/api/v1/dances')
+      .send({
+        name: 'Vandals of Hammerwich',
+        tradition: 'Litchfield',
+        dancerQuantity: 8
+      })
+      .then((res) => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
+  it('anyone can get all dances', () => {
 
     return request(app)
       .get('/api/v1/dances')
@@ -68,7 +93,7 @@ describe('dance routes', () => {
       });
   });
 
-  it('gets all dances matching query', () => {
+  it('anyone can get all dances matching query', () => {
     return request(app)
       .get('/api/v1/dances?tradition=Bampton')
       .then(res => {
@@ -85,7 +110,7 @@ describe('dance routes', () => {
       });
   });
 
-  it('gets a dance by id', () => {
+  it('anyone can get a dance by id', () => {
     return request(app)
       .get(`/api/v1/dances/${dances[0].id}`)
       .then(res => {
@@ -100,8 +125,17 @@ describe('dance routes', () => {
       });
   });
 
-  it('updates a dance by id', () => {
-    return request(app)
+  it('admin can update a dance by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'admin@test.com', 
+        password: 'password'
+      });
+
+    return agent
       .patch(`/api/v1/dances/${dances[0].id}`)
       .send({ name: 'Mrs. Casey\'s' })
       .then(res => {
@@ -116,8 +150,38 @@ describe('dance routes', () => {
       });
   });
 
-  it('deletes a dance by id', () => {
-    return request(app)
+  it('squire can\'t update a dance by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'squire@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .patch(`/api/v1/dances/${dances[0].id}`)
+      .send({ name: 'Mrs. Casey\'s' })
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
+  it('admin can delete a dance by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'admin@test.com', 
+        password: 'password'
+      });
+
+    return agent
       .delete(`/api/v1/dances/${dances[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
@@ -127,6 +191,26 @@ describe('dance routes', () => {
           tradition: 'Moulton',
           dancerQuantity: 6,
           __v: 0
+        });
+      });
+  });
+
+  it('squire can\'t delete a dance by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'squire@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .delete(`/api/v1/dances/${dances[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
         });
       });
   });
