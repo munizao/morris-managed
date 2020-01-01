@@ -14,11 +14,19 @@ const testSetup = async() => {
   let gigs;
   let squireUser;
   let dancerUser;
+  let adminUser;
 
   await mongoose.connection.dropDatabase();
   const testDancer = await Dancer.create({
     name: 'Will K',
   });
+
+  adminUser = await User.create({
+    email: 'admin@test.com',
+    password: 'password',
+    role: 'admin',
+    // note: no associated dancer object
+  });  
 
   squireUser = await User.create({
     email: 'squire@test.com',
@@ -143,7 +151,7 @@ const testSetup = async() => {
 
   dancers = await Promise.all(dancers.map((dancer) => Dancer.findById(dancer._id)));
 
-  return { dances, dancers, dancePerformances, gigs, teams, squireUser, dancerUser };
+  return { dances, dancers, dancePerformances, gigs, teams, squireUser, dancerUser, adminUser };
 };
 
 module.exports = { testSetup };
