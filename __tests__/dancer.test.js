@@ -42,7 +42,7 @@ describe('dancer routes', () => {
           _id: expect.any(String),
           name: 'Dawn C',
           competencies: [],
-          teams: [teams[0]._id],
+          teams: [teams[0]._id.toString()],
           __v: 0
         });
       });
@@ -82,7 +82,7 @@ describe('dancer routes', () => {
         password: 'password'
       });
 
-    return request(app)
+    return agent
       .get('/api/v1/dancers')
       .then(res => {
         dancers.forEach(dancer => {
@@ -90,8 +90,8 @@ describe('dancer routes', () => {
             _id: dancer._id.toString(),
             name: dancer.name,
             competencies: [],
-            teams: [],
-            __v: 0,
+            teams: dancer.teams.map(team => team.toString()),
+            __v: 1,
           });
         });
       });
@@ -115,8 +115,8 @@ describe('dancer routes', () => {
             _id: dancer._id.toString(),
             name: dancer.name,
             competencies: [],
-            teams: [],
-            __v: 0,
+            teams: dancer.teams.map(team => team.toString()),
+            __v: 1,
           });
         });
       });
@@ -126,14 +126,9 @@ describe('dancer routes', () => {
     return request(app)
       .get('/api/v1/dancers')
       .then(res => {
-        dancers.forEach(dancer => {
-          expect(res.body).toContainEqual({
-            _id: dancer._id.toString(),
-            name: dancer.name,
-            competencies: [],
-            teams: [],
-            __v: 0,
-          });
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
         });
       });
   });
@@ -155,8 +150,17 @@ describe('dancer routes', () => {
           _id: expect.any(String),
           name: 'Ali M',
           competencies: expect.any(Array),
-          teams: [],
-          __v: 0,
+          teams: [
+            {
+              _id: teams[0]._id.toString(),
+              name: 'Bridgetown Morris Men',
+              dances: [],
+              squire: teams[0].squire._id.toString(),
+              dancers: teams[0].dancers.map(dancer => dancer.toString()),
+              __v: 0,
+            }
+          ],
+          __v: 1,
         });
       });
   });
@@ -189,9 +193,18 @@ describe('dancer routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'Dawn C',
-          competencies: expect.any(Array),
-          teams: [],
-          __v: 0,
+          competencies: [],
+          teams: [
+            {
+              _id: teams[0]._id.toString(),
+              name: 'Bridgetown Morris Men',
+              dances: [],
+              squire: teams[0].squire._id.toString(),
+              dancers: teams[0].dancers.map(dancer => dancer.toString()),
+              __v: 0,
+            }
+          ],
+          __v: 1,
         });
       });
   });
@@ -213,8 +226,17 @@ describe('dancer routes', () => {
           _id: expect.any(String),
           name: 'Ali M',
           competencies: expect.any(Array),
-          teams: [],
-          __v: 0
+          teams: [
+            {
+              _id: teams[0]._id.toString(),
+              name: 'Bridgetown Morris Men',
+              dances: [],
+              squire: teams[0].squire._id.toString(),
+              dancers: teams[0].dancers.map(dancer => dancer.toString()),
+              __v: 0,
+            }
+          ],
+          __v: 1
         });
       });
   });
@@ -233,11 +255,8 @@ describe('dancer routes', () => {
       .delete(`/api/v1/dancers/${dancers[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
-          _id: expect.any(String),
-          name: 'Ali M',
-          competencies: expect.any(Array),
-          teams: [],
-          __v: 0
+          message: 'Access to that resource not allowed',
+          status: 403,
         });
       });
   });
