@@ -6,7 +6,6 @@ const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const { testSetup } = require('../test-setup/setup');
 
-
 describe('team routes', () => {
   beforeAll(() => {
     connect();
@@ -43,6 +42,7 @@ describe('team routes', () => {
           _id: expect.any(String),
           name: 'Sound and Fury',
           dances: [],
+          dancers: [],
           squire: user._id,
           __v: 0
         });
@@ -72,6 +72,8 @@ describe('team routes', () => {
             _id: team._id.toString(),
             name: team.name,
             dances: [],
+            squire: team.squire._id.toString(),
+            dancers: team.dancers.map(dancer => dancer.toString()),
             __v: 0,
           });
         });
@@ -86,6 +88,8 @@ describe('team routes', () => {
           _id: expect.any(String),
           name: 'Bridgetown Morris Men',
           dances: [],
+          squire: teams[0].squire._id.toString(),
+          dancers: teams[0].dancers.map(dancer => dancer.toString()),
           __v: 0,
         });
       });
@@ -97,19 +101,20 @@ describe('team routes', () => {
     await agent
       .post('/api/v1/auth/login')
       .send({
-        email: 'dancer@test.com', 
+        email: 'squire@test.com', 
         password: 'password'
       });
 
     return agent
-      .patch(`/api/v1/teams/${teams[0].id}`)
+      .patch(`/api/v1/teams/${teams[0]._id}`)
       .send({ name: 'Portland Morris' })
       .then(res => {
         expect(res.body).toEqual({
-          _id: expect.any(String),
+          _id: teams[0]._id.toString(),
           name: 'Portland Morris',
           dances: [],
-          squire: teams[0].squire._id,
+          dancers: teams[0].dancers.map(dancer => dancer.toString()),
+          squire: teams[0].squire._id.toString(),
           __v: 0,
         });
       });
@@ -150,16 +155,17 @@ describe('team routes', () => {
       .delete(`/api/v1/teams/${teams[0].id}`)
       .then(res => {
         expect(res.body).toEqual({
-          _id: expect.any(String),
+          _id: teams[0].id.toString(),
           name: 'Bridgetown Morris Men',
+          dancers: teams[0].dancers.map(dancer => dancer.toString()),
           dances: [],
-          squire: teams[0].squire._id,
+          squire: teams[0].squire._id.toString(),
           __v: 0
         });
       });
   });
 
-  it('dancer can\t delete a team by id', async() => {
+  it('dancer can\'t delete a team by id', async() => {
     const agent = request.agent(app);
 
     await agent
