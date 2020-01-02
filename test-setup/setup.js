@@ -75,21 +75,21 @@ const testSetup = async() => {
         squire: squireUser._id,
         name: 'Bridgetown Morris Men',
         dancers: [
-          testDancer.id,
-          dancers[0].id,
-          dancers[1].id,
-          dancers[2].id,
-          dancers[3].id,
+          testDancer._id,
+          dancers[0]._id,
+          dancers[1]._id,
+          dancers[2]._id,
+          dancers[3]._id,
         ],
       },
       {
         squire: squireUser._id,
         name: 'Renegade Rose Morris',
         dancers: [
-          dancers[4].id,
-          dancers[5].id,
-          dancers[6].id,
-          dancers[7].id,
+          dancers[4]._id,
+          dancers[5]._id,
+          dancers[6]._id,
+          dancers[7]._id,
         ],
       }
     ]
@@ -150,7 +150,6 @@ const testSetup = async() => {
   ]);
 
   dancers = await Promise.all(dancers.map((dancer) => Dancer.findById(dancer._id)));
-
   return { dances, dancers, dancePerformances, gigs, teams, squireUser, dancerUser, adminUser };
 };
 
