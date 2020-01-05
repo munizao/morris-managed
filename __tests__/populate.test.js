@@ -1,20 +1,15 @@
 require('dotenv').config();
-// const request = require('supertest');
-// const app = require('../lib/app');
-
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
-const Dancer = require('../lib/models/Team');
+const Dancer = require('../lib/models/Dancer');
 const User = require('../lib/models/User');
 const Team = require('../lib/models/Team');
 
 describe('why does populate not work on virtual?!', () => {
   
   beforeAll(async() => {
-    await connect();
-    await mongoose.connection.dropDatabase();
-
-    
+    connect();
+    await mongoose.connection.dropDatabase();    
   });
 
   afterAll(() => {
@@ -24,7 +19,7 @@ describe('why does populate not work on virtual?!', () => {
   it('populates the freaking thing', async() => {
     console.log('got here');
     let testDancer =  await Dancer.create({
-      name: 'Will K',
+      name: 'Will K'
     });
     console.log(testDancer);
     let user = await User.create({
@@ -34,22 +29,23 @@ describe('why does populate not work on virtual?!', () => {
       dancer: testDancer._id
     });
     console.log(user);
-    let team = await Team.create([{
+    let team = await Team.create({
       squire: user._id,
       name: 'Bridgetown Morris Men',
       dancers: [],
-    }]);
-
+    });
     console.log(team);
-    console.log(user.populated('squireOf'));
-    console.log(await user.populate('squireOf').execPopulate());
-    console.log(user.populated('squireOf'));
+    await user.populate('squireOf').execPopulate();
     console.log(user);
-    return expect(user).toEqual({
+    return expect(user.toJSON()).toEqual({
+      _id: expect.any(String),
+      id: expect.any(mongoose.Types.ObjectId),
       email: 'dancer@test.com',
       passwordHash: expect.any(String),
       role: 'dancer',
-      dancer: testDancer._id
+      dancer: testDancer._id,
+      squireOf: [team],
+      __v: 0
     });
   });
 });
