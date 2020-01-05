@@ -13,8 +13,9 @@ describe('dancer routes', () => {
   });
   let dancers;
   let teams;
+  let dancerUser;
   beforeEach(async() => {
-    ({ dancers, teams } = await testSetup());
+    ({ dancers, teams, dancerUser } = await testSetup());
   });
 
   afterAll(() => {
@@ -41,7 +42,6 @@ describe('dancer routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'Dawn C',
-          competencies: [],
           teams: [teams[0]._id.toString()],
           __v: 0
         });
@@ -89,15 +89,14 @@ describe('dancer routes', () => {
           expect(res.body).toContainEqual({
             _id: dancer._id.toString(),
             name: dancer.name,
-            competencies: [],
-            teams: dancer.teams.map(team => team.toString()),
+            teams: expect.any(Array),
             __v: 1,
           });
         });
       });
   });  
 
-  it('dancer can get all dancers on same team(s)', async() => {
+  it('dancer can get all dancers on same team', async() => {
     const agent = request.agent(app);
 
     await agent
@@ -111,11 +110,10 @@ describe('dancer routes', () => {
       .get('/api/v1/dancers')
       .then(res => {
         dancers.forEach(dancer => {
-          expect(res.body).toContainEqual({
+          return expect(res.body).toContainEqual({
             _id: dancer._id.toString(),
             name: dancer.name,
-            competencies: [],
-            teams: dancer.teams.map(team => team.toString()),
+            teams: expect.any(Array),
             __v: 1,
           });
         });
@@ -144,12 +142,11 @@ describe('dancer routes', () => {
       });
 
     return agent
-      .get(`/api/v1/dancers/${dancers[0].id}`)
+      .get(`/api/v1/dancers/${dancers[0]._id}`)
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'Ali M',
-          competencies: expect.any(Array),
           teams: [
             {
               _id: teams[0]._id.toString(),
@@ -161,6 +158,26 @@ describe('dancer routes', () => {
             }
           ],
           __v: 1,
+        });
+      });
+  });
+
+  it('dancer can\'t get a dancer not on same team by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .get(`/api/v1/dancers/${dancers[7].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,          
         });
       });
   });
@@ -187,13 +204,43 @@ describe('dancer routes', () => {
       });
 
     return agent
-      .patch(`/api/v1/dancers/${dancers[0].id}`)
+      .patch(`/api/v1/dancers/${dancers[0]._id}`)
       .send({ name: 'Dawn C' })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'Dawn C',
-          competencies: [],
+          teams: [
+            {
+              _id: teams[0]._id.toString(),
+              name: 'Bridgetown Morris Men',
+              dances: [],
+              squire: teams[0].squire._id.toString(),
+              dancers: teams[0].dancers.map(dancer => dancer.toString()),
+              __v: 0,
+            }
+          ],
+          __v: 1,
+        });
+      });
+  });
+
+  it('dancer can update self by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+    return agent
+      .patch(`/api/v1/dancers/${dancerUser.dancer._id}`)
+      .send({ name: 'Dawn C' })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'Dawn C',
           teams: [
             {
               _id: teams[0]._id.toString(),
@@ -225,7 +272,7 @@ describe('dancer routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'Ali M',
-          competencies: expect.any(Array),
+          // competencies: [],
           teams: [
             {
               _id: teams[0]._id.toString(),
