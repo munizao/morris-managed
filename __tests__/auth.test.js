@@ -114,6 +114,7 @@ describe('auth routes', () => {
           _id: user.id,
           email: 'test@test.com',
           role: 'dancer',
+          dancer: user.dancer,
           __v: 0
         });
       });
