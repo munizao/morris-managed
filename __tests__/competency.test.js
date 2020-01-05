@@ -226,4 +226,138 @@ describe('competency routes', () => {
         });
       });
   });
+
+  it('dancer can update their own competency by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .patch(`/api/v1/competencies/${competencies[0].id}`)
+      .send({ levels: [
+        'novice', 'intermediate',
+        'intermediate', 'intermediate',
+        'intermediate', 'novice'
+      ]})
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: competencies[0]._id.toString(),
+          dance: {
+            __v: 0,
+            _id: dances[0]._id.toString(),
+            dancerQuantity: 6,
+            figures: [],
+            name: 'Oak and Ash and Thorn',
+            tradition: 'Moulton',
+          },
+          dancer: dancerUser.dancer.toString(),
+          levels: ['novice', 'intermediate',
+            'intermediate', 'intermediate',
+            'intermediate', 'novice'],
+          __v: expect.any(Number)
+        });
+      });
+  });
+
+  it('dancer can\'t update another dancer\'s competency by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .patch(`/api/v1/competencies/${competencies[2].id}`)
+      .send({ levels: ['novice', 'novice', 'novice', 'novice'] })
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
+  it('anonymous user can\'t update competency by id', async() => {
+    return request(app)
+      .patch(`/api/v1/competencies/${competencies[2].id}`)
+      .send({ levels: ['novice', 'novice', 'novice', 'novice'] })
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
+  it('dancer can delete their own competency by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .delete(`/api/v1/competencies/${competencies[0].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: competencies[0]._id.toString(),
+          dance: {
+            __v: 0,
+            _id: dances[0]._id.toString(),
+            dancerQuantity: 6,
+            figures: [],
+            name: 'Oak and Ash and Thorn',
+            tradition: 'Moulton',
+          },
+          dancer: dancerUser.dancer.toString(),
+          levels: ['novice', 'novice',
+            'intermediate', 'intermediate',
+            'novice', 'novice'],
+          __v: 0
+        });
+      });
+  });
+
+  it('dancer can\'t delete another dancer\'s competency by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+
+    return agent
+      .delete(`/api/v1/competencies/${competencies[2].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
+  it('anonymous user can\'t delete competency by id', async() => {
+    return request(app)
+      .delete(`/api/v1/competencies/${competencies[2].id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
 });
