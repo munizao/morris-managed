@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const Dance = require('../lib/models/Dance');
 const DancePerformance = require('../lib/models/DancePerformance');
 const Dancer = require('../lib/models/Dancer');
-// const Competency = require('../lib/models/Competency');
 const Gig = require('../lib/models/Gig');
 const Team = require('../lib/models/Team');
 const User = require('../lib/models/User');
+const Competency = require('../lib/models/Competency');
 
 const testSetup = async() => {
   let dances;
@@ -15,6 +15,7 @@ const testSetup = async() => {
   let squireUser;
   let dancerUser;
   let adminUser;
+  let competencies;
 
   await mongoose.connection.dropDatabase();
   const testDancer = await Dancer.create({
@@ -30,6 +31,13 @@ const testSetup = async() => {
 
   squireUser = await User.create({
     email: 'squire@test.com',
+    password: 'password',
+    role: 'squire',
+    dancer: testDancer._id
+  });
+
+  const squireUser2 = await User.create({
+    email: 'squire2@test.com',
     password: 'password',
     role: 'squire',
     dancer: testDancer._id
@@ -83,7 +91,7 @@ const testSetup = async() => {
         ],
       },
       {
-        squire: squireUser._id,
+        squire: squireUser2._id,
         name: 'Renegade Rose Morris',
         dancers: [
           dancers[4]._id,
@@ -149,8 +157,34 @@ const testSetup = async() => {
     }
   ]);
 
+  competencies = await Competency.create(
+    [
+      {
+        dance: dances[0]._id,
+        dancer: dancerUser.dancer,
+        levels: ['novice', 'novice',
+          'intermediate', 'intermediate',
+          'novice', 'novice']
+      },
+      {
+        dance: dances[1]._id,
+        dancer: dancers[0]._id,
+        levels: ['proficient', 'proficient',
+          'proficient', 'proficient',
+          'proficient', 'proficient',
+          'proficient', 'proficient']
+      },
+      {
+        dance: dances[2]._id,
+        dancer: dancers[5]._id,
+        levels: ['intermediate', 'proficient',
+          'proficient', 'intermediate']
+      }
+    ]
+  );
+
   dancers = await Promise.all(dancers.map((dancer) => Dancer.findById(dancer._id)));
-  return { dances, dancers, dancePerformances, gigs, teams, squireUser, dancerUser, adminUser };
+  return { dances, dancers, dancePerformances, gigs, teams, squireUser, dancerUser, adminUser, competencies };
 };
 
 module.exports = { testSetup };
