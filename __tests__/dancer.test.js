@@ -256,6 +256,38 @@ describe('dancer routes', () => {
       });
   });
 
+  it('dancer can\'t update another dancer by id', async() => {
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'dancer@test.com', 
+        password: 'password'
+      });
+    return agent
+      .patch(`/api/v1/dancers/${dancers[7]._id}`)
+      .send({ name: 'Dawn C' })
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,
+        });
+      });
+  });
+
+  it('anonymous user can\'t update dancer by id', async() => {
+    return request(app)
+      .patch(`/api/v1/dancers/${dancerUser.dancer._id}`)
+      .send({ name: 'Dawn C' })
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'Access to that resource not allowed',
+          status: 403,          
+        });
+      });
+  });
+
   it('admin can delete a dancer by id', async() => {
     const agent = request.agent(app);
 
@@ -272,7 +304,6 @@ describe('dancer routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'Ali M',
-          // competencies: [],
           teams: [
             {
               _id: teams[0]._id.toString(),
