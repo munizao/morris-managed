@@ -67,7 +67,7 @@ describe('dance performance routes', () => {
       });
   });
 
-  it('dancer can\t create a dance performance', async() => {
+  it('dancer can\'t create a dance performance', async() => {
     const agent = request.agent(app);
 
     await agent
@@ -112,17 +112,11 @@ describe('dance performance routes', () => {
 
     return agent
       .get('/api/v1/dance-performances')
-      .then(res => {
-        dancePerformances.forEach(dancePerformance => {
-          expect(res.body).toContainEqual({
-            _id: dancePerformance._id.toString(),
-            dance: dancePerformance.dance.toString(),
-            dancers: dancePerformance.dancers.map(dancer => dancer.toString()),
-            gig: dancePerformance.gig.toString(),
-            team: teams[0].id,
-            __v: 0,
-          });
-        });
+      .then(async res => {
+        await Promise.all(dancePerformances.map(async dancePerformance => {
+          await dancePerformance.populate('dance dancers').execPopulate();
+          expect(res.body).toContainEqual(JSON.parse(JSON.stringify(dancePerformance)));
+        }));
       });
   });
 
