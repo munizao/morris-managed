@@ -35,21 +35,6 @@ describe('auth routes', () => {
       });
   });
 
-  it('signup route signs up a user with a new team', () => {
-    return request(app)
-      .post('/api/v1/auth/signup')
-      .send({ email: 'test@test.com', password: 'password', name: 'Ali M', newTeamName: 'Sound and Fury' })
-      .then(res => {
-        expect(res.body).toEqual({
-          _id: expect.any(String),
-          email: 'test@test.com',
-          dancer: expect.any(String),
-          role: 'dancer',
-          __v: 0
-        });
-      });
-  });
-
   it('login route logs in a user', async() => {
     const dancer = await Dancer.create({ name: 'Ali M' });
     const user = await User.create({ email: 'test@test.com', password: 'password', dancer: dancer._id });
@@ -111,10 +96,10 @@ describe('auth routes', () => {
       .get('/api/v1/auth/signed-in')
       .then(res => {
         expect(res.body).toEqual({
-          _id: user.id,
+          _id: user.id.toString(),
           email: 'test@test.com',
           role: 'dancer',
-          dancer: user.dancer,
+          dancer: user.dancer.toString(),
           __v: 0
         });
       });
