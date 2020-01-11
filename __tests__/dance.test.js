@@ -2,25 +2,9 @@ require('dotenv').config();
 
 const request = require('supertest');
 const app = require('../lib/app');
-const connect = require('../lib/utils/connect');
-const mongoose = require('mongoose');
-const { testSetup } = require('../test-setup/setup');
-
+const testObj = require('../test-setup/setup');
 
 describe('dance routes', () => {
-  beforeAll(() => {
-    connect();
-  });
-  let dances;
-  let squireUser;
-  beforeEach(async() => {
-    ({ dances, squireUser } = await testSetup());
-  });
-
-  afterAll(() => {
-    return mongoose.connection.close();
-  });
-
   it('squire can create a dance', async() => {
     const agent = request.agent(app);
 
@@ -75,7 +59,9 @@ describe('dance routes', () => {
       });
   });
 
-  it('anyone can get all dances', () => {
+  it('anyone can get all dances', async() => {
+    const { testData } = testObj;
+    const { dances } = testData;
 
     return request(app)
       .get('/api/v1/dances')
@@ -93,7 +79,10 @@ describe('dance routes', () => {
       });
   });
 
-  it('anyone can get all dances matching query', () => {
+  it('anyone can get all dances matching query', async() => {
+    const { testData } = testObj;
+    const { dances } = await testData;
+    // console.log(dances);
     return request(app)
       .get('/api/v1/dances?tradition=Bampton')
       .then(res => {
@@ -110,7 +99,9 @@ describe('dance routes', () => {
       });
   });
 
-  it('anyone can get a dance by id', () => {
+  it('anyone can get a dance by id', async() => {
+    const { testData } = testObj;
+    const { dances } = await testData;
     return request(app)
       .get(`/api/v1/dances/${dances[0].id}`)
       .then(res => {
@@ -126,6 +117,9 @@ describe('dance routes', () => {
   });
 
   it('admin can update a dance by id', async() => {
+    const { testData } = testObj;
+    const { dances } = await testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -151,6 +145,8 @@ describe('dance routes', () => {
   });
 
   it('squire can\'t update a dance by id', async() => {
+    const { testData } = testObj;
+    const { dances } = await testData;
     const agent = request.agent(app);
 
     await agent
@@ -172,6 +168,8 @@ describe('dance routes', () => {
   });
 
   it('admin can delete a dance by id', async() => {
+    const { testData } = testObj;
+    const { dances } = await testData;
     const agent = request.agent(app);
 
     await agent
@@ -196,6 +194,8 @@ describe('dance routes', () => {
   });
 
   it('squire can\'t delete a dance by id', async() => {
+    const { testData } = testObj;
+    const { dances } = await testData;
     const agent = request.agent(app);
 
     await agent
