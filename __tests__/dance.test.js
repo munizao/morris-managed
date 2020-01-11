@@ -60,8 +60,7 @@ describe('dance routes', () => {
   });
 
   it('anyone can get all dances', async() => {
-    const { testData } = testObj;
-    const { dances } = testData;
+    const { dances } = testObj.testData;
 
     return request(app)
       .get('/api/v1/dances')
@@ -80,8 +79,7 @@ describe('dance routes', () => {
   });
 
   it('anyone can get all dances matching query', () => {
-    const { testData } = testObj;
-    const { dances } = testData;
+    const { dances } = testObj.testData;
     return request(app)
       .get('/api/v1/dances?tradition=Bampton')
       .then(res => {
@@ -99,8 +97,7 @@ describe('dance routes', () => {
   });
 
   it('anyone can get a dance by id', () => {
-    const { testData } = testObj;
-    const { dances } = testData;
+    const { dances } = testObj.testData;
     return request(app)
       .get(`/api/v1/dances/${dances[0].id}`)
       .then(res => {
@@ -116,9 +113,7 @@ describe('dance routes', () => {
   });
 
   it('admin can update a dance by id', async() => {
-    const { testData } = testObj;
-    const { dances } = testData;
-
+    const { dances } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -144,8 +139,7 @@ describe('dance routes', () => {
   });
 
   it('squire can\'t update a dance by id', async() => {
-    const { testData } = testObj;
-    const { dances } = testData;
+    const { dances } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -167,8 +161,7 @@ describe('dance routes', () => {
   });
 
   it('admin can delete a dance by id', async() => {
-    const { testData } = testObj;
-    const { dances } = testData;
+    const { dances } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -193,8 +186,7 @@ describe('dance routes', () => {
   });
 
   it('squire can\'t delete a dance by id', async() => {
-    const { testData } = testObj;
-    const { dances } = testData;
+    const { dances } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
