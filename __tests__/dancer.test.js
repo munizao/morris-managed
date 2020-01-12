@@ -2,27 +2,12 @@ require('dotenv').config();
 
 const request = require('supertest');
 const app = require('../lib/app');
-const connect = require('../lib/utils/connect');
-const mongoose = require('mongoose');
-const { testSetup } = require('../test-setup/setup');
+const testObj = require('../test-setup/setup');
 
 
 describe('dancer routes', () => {
-  beforeAll(() => {
-    connect();
-  });
-  let dancers;
-  let teams;
-  let dancerUser;
-  beforeEach(async() => {
-    ({ dancers, teams, dancerUser } = await testSetup());
-  });
-
-  afterAll(() => {
-    return mongoose.connection.close();
-  });
-
   it('squire can create a dancer', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -49,6 +34,7 @@ describe('dancer routes', () => {
   });
 
   it('dancer can\'t create a dancer', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -73,6 +59,8 @@ describe('dancer routes', () => {
   });
 
   it('admin can get all dancers', async() => {
+    const { dancers } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -97,6 +85,8 @@ describe('dancer routes', () => {
   });  
 
   it('dancer can get all dancers on same team', async() => {
+    const { dancers } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -132,6 +122,7 @@ describe('dancer routes', () => {
   });
 
   it('dancer can get a dancer on same team by id', async() => {
+    const { teams, dancers } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -163,6 +154,8 @@ describe('dancer routes', () => {
   });
 
   it('dancer can\'t get a dancer not on same team by id', async() => {
+    const { dancers } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -183,6 +176,8 @@ describe('dancer routes', () => {
   });
 
   it('anonymous user can\'t get a dancer by id', () => {
+    const { dancers } = testObj.testData;
+
     return request(app)
       .get(`/api/v1/dancers/${dancers[0].id}`)
       .then(res => {
@@ -194,6 +189,8 @@ describe('dancer routes', () => {
   });
   
   it('squire can update a dancer on squired team by id', async() => {
+    const { teams, dancers } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -226,6 +223,9 @@ describe('dancer routes', () => {
   });
 
   it('dancer can update self by id', async() => {
+    const { teams } = testObj.testData;
+    const { dancerUser } = testObj.testUsers;
+
     const agent = request.agent(app);
 
     await agent
@@ -257,6 +257,8 @@ describe('dancer routes', () => {
   });
 
   it('dancer can\'t update another dancer by id', async() => {
+    const { dancers } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -277,8 +279,9 @@ describe('dancer routes', () => {
   });
 
   it('anonymous user can\'t update dancer by id', async() => {
+    const { dancerUser } = testObj.testUsers;
     return request(app)
-      .patch(`/api/v1/dancers/${dancerUser.dancer._id}`)
+      .patch(`/api/v1/dancers/${dancerUser.dancer}`)
       .send({ name: 'Dawn C' })
       .then(res => {
         expect(res.body).toEqual({
@@ -289,6 +292,8 @@ describe('dancer routes', () => {
   });
 
   it('admin can delete a dancer by id', async() => {
+    const { teams, dancers } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -320,6 +325,7 @@ describe('dancer routes', () => {
   });
 
   it('squire can\'t delete a dancer by id', async() => {
+    const { dancers } = testObj.testData;
     const agent = request.agent(app);
 
     await agent

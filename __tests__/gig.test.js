@@ -2,29 +2,13 @@ require('dotenv').config();
 
 const request = require('supertest');
 const app = require('../lib/app');
-const connect = require('../lib/utils/connect');
-const mongoose = require('mongoose');
-const { testSetup } = require('../test-setup/setup');
+const testObj = require('../test-setup/setup');
 
 
 describe('gig routes', () => {
-  beforeAll(() => {
-    connect();
-  });
-  let dancers;
-  let gigs;
-  let teams;
-  beforeEach(async() => {
-    ({ dancers, gigs, teams } = await testSetup());
-  });
-
-  afterAll(() => {
-    return mongoose.connection.close();
-  });
-
-
 
   it('squire user can create a gig', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -54,6 +38,7 @@ describe('gig routes', () => {
   });
 
   it('squire user can\'t create a gig for a team they aren\'t squire of', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -79,6 +64,7 @@ describe('gig routes', () => {
   });
 
   it('dancer user can\'t create a gig', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -104,6 +90,7 @@ describe('gig routes', () => {
   });
 
   it('gets all gigs for users teams', async() => {
+    const { gigs } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -141,6 +128,8 @@ describe('gig routes', () => {
   });
 
   it('gets a gig by id for user', async() => {
+    const { teams, gigs } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -166,6 +155,8 @@ describe('gig routes', () => {
 
 
   it('can\'t get gig by id for anonymous user', () => {
+    const { gigs } = testObj.testData;
+
     return request(app)
       .get(`/api/v1/gigs/${gigs[0].id}`)
       .then(res => {
@@ -177,6 +168,7 @@ describe('gig routes', () => {
   });
   
   it('squire can update a gig by id', async() => {
+    const { teams, gigs } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -202,6 +194,8 @@ describe('gig routes', () => {
   });
 
   it('dancer can\'t update a gig by id', async() => {
+    const { gigs } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -223,6 +217,7 @@ describe('gig routes', () => {
   });
 
   it('squire can delete a gig by id', async() => {
+    const { teams, gigs } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -247,6 +242,7 @@ describe('gig routes', () => {
   });
 
   it('dancer can\'t delete a gig by id', async() => {
+    const { gigs } = testObj.testData;
     const agent = request.agent(app);
 
     await agent

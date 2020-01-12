@@ -2,24 +2,9 @@ require('dotenv').config();
 
 const request = require('supertest');
 const app = require('../lib/app');
-const connect = require('../lib/utils/connect');
-const mongoose = require('mongoose');
-const { testSetup } = require('../test-setup/setup');
+const testObj = require('../test-setup/setup');
 
 describe('team routes', () => {
-  beforeAll(() => {
-    connect();
-  });
-  let teams;
-  beforeEach(async() => {
-    ({ teams } = await testSetup());
-  });
-
-  afterAll(() => {
-    return mongoose.connection.close();
-  });
-
-
 
   it('dancer can create a team', async() => {
     const agent = request.agent(app);
@@ -64,6 +49,7 @@ describe('team routes', () => {
   });
 
   it('anonymous user can get all teams', () => {
+    const { teams } = testObj.testData;
     return request(app)
       .get('/api/v1/teams')
       .then(res => {
@@ -81,6 +67,8 @@ describe('team routes', () => {
   });
 
   it('anonymous user can get a team by id', () => {
+    const { teams } = testObj.testData;
+
     return request(app)
       .get(`/api/v1/teams/${teams[0].id}`)
       .then(res => {
@@ -96,6 +84,7 @@ describe('team routes', () => {
   });
   
   it('squire can update a team by id', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -121,6 +110,7 @@ describe('team routes', () => {
   });
 
   it('dancer can\'t update a team by id', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -142,6 +132,7 @@ describe('team routes', () => {
   });
 
   it('squire can delete a team by id', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -166,6 +157,7 @@ describe('team routes', () => {
   });
 
   it('dancer can\'t delete a team by id', async() => {
+    const { teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
