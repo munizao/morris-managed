@@ -16,8 +16,11 @@ const seedData = async(testUsers) => {
     name: 'Will K',
   });
   squireUser.dancer = testDancer._id;
+  await squireUser.save();
   squireUser2.dancer = testDancer._id;
+  await squireUser2.save();
   dancerUser.dancer = testDancer._id;
+  await dancerUser.save();
 
 
   const dances = await Dance.create([
