@@ -1,29 +1,12 @@
 require('dotenv').config();
-
 const request = require('supertest');
 const app = require('../lib/app');
-const connect = require('../lib/utils/connect');
-const mongoose = require('mongoose');
-const { testSetup } = require('../test-setup/setup');
+const testObj = require('../test-setup/setup');
 
 describe('dance performance routes', () => {
-  beforeAll(() => {
-    connect();
-  });
-  let dances;
-  let dancers;
-  let dancePerformances;
-  let gigs;
-  let teams;
-  beforeEach(async() => {
-    ({ dances, dancers, dancePerformances, gigs, teams } = await testSetup());
-  });
-
-  afterAll(() => {
-    return mongoose.connection.close();
-  });
 
   it('squire creates a dance performance', async() => {
+    const { dances, dancers, gigs, teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -68,6 +51,8 @@ describe('dance performance routes', () => {
   });
 
   it('dancer can\'t create a dance performance', async() => {
+    const { dances, dancers, gigs, teams } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -101,6 +86,8 @@ describe('dance performance routes', () => {
   });
 
   it('gets all dance performances for user\'s teams', async() => {
+    const { dancePerformances } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -121,6 +108,7 @@ describe('dance performance routes', () => {
   });
 
   it('anonymous user can\'t get all dance performances', async() => {
+    const { dancePerformances } = testObj.testData;
     return request(app)
       .get('/api/v1/dance-performances')
       .then(res => {
@@ -134,6 +122,9 @@ describe('dance performance routes', () => {
   });
 
   it('dancer can get a dance performance by id', async() => {
+    const { dancePerformances, dances, dancers, gigs, teams } = testObj.testData;
+    console.log(dancers);
+
     const agent = request.agent(app);
 
     await agent
@@ -152,12 +143,14 @@ describe('dance performance routes', () => {
           dancers: dancers.slice(0, 6).map(dancer => JSON.parse(JSON.stringify(dancer))),
           gig: gigs[0].id,
           team: teams[0].id,
-          __v: 0,
+          __v: expect.any(Number),
         });
       });
   });
 
   it('anonymous user can\'t get a dance performance by id', () => {
+    const { dancePerformances } = testObj.testData;
+
     return request(app)
       .get(`/api/v1/dance-performances/${dancePerformances[0].id}`)
       .then(res => {
@@ -170,6 +163,7 @@ describe('dance performance routes', () => {
   
 
   it('squire can update a dance performance by id', async() => {
+    const { dancePerformances, dances, dancers, gigs, teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -195,6 +189,8 @@ describe('dance performance routes', () => {
   });
 
   it('dancer can\'t update a dance performance by id', async() => {
+    const { dancePerformances, gigs } = testObj.testData;
+
     const agent = request.agent(app);
 
     await agent
@@ -216,6 +212,7 @@ describe('dance performance routes', () => {
   });
 
   it('squire can delete a dance performance by id', async() => {
+    const { dancePerformances, dances, dancers, gigs, teams } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
@@ -240,6 +237,7 @@ describe('dance performance routes', () => {
   });
 
   it('dancer can\'t delete a dance performance by id', async() => {
+    const { dancePerformances } = testObj.testData;
     const agent = request.agent(app);
 
     await agent
