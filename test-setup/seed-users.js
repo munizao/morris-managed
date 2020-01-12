@@ -1,5 +1,4 @@
 const User = require('../lib/models/User');
-const Dancer = require('../lib/models/Dancer');
 
 const seedAccounts = async() => {
   // const testDancer = await Dancer.create({
