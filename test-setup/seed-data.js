@@ -40,7 +40,7 @@ const seedData = async(testUsers) => {
       dancerQuantity: 4
     },
   ]);
-  const dancers = await Dancer.create([
+  let dancers = await Dancer.create([
     { name: 'Ali M' },
     { name: 'Linda G' },
     { name: 'David S' },
@@ -75,7 +75,8 @@ const seedData = async(testUsers) => {
       }
     ]
   );
-
+  // we need this currently because creating teams re-saves the dancers.
+  dancers = await Promise.all(dancers.map(dancer => Dancer.findById(dancer._id)));
   const gigs = await Gig.create([
     {
       name: 'Paganfaire 2020',
