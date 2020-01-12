@@ -123,7 +123,6 @@ describe('dance performance routes', () => {
 
   it('dancer can get a dance performance by id', async() => {
     const { dancePerformances, dances, dancers, gigs, teams } = testObj.testData;
-    console.log(dancers);
 
     const agent = request.agent(app);
 
