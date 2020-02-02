@@ -28,7 +28,12 @@ describe('auth routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           email: 'test@test.com',
-          dancer: expect.any(String),
+          dancer: {
+            __v: 0,
+            name: 'Ali M',
+            _id: expect.any(String),
+            teams: []
+          },
           role: 'dancer',
           __v: 0
         });
@@ -46,7 +51,12 @@ describe('auth routes', () => {
           _id: user.id,
           email: 'test@test.com',
           role: 'dancer',
-          dancer: dancer.id,
+          dancer: {
+            __v: 0,
+            name: 'Ali M',
+            _id: dancer._id.toString(),
+            teams: []
+          },
           __v: 0
         });
       });
@@ -81,8 +91,10 @@ describe('auth routes', () => {
     const user = await User.create({
       email: 'test@test.com',
       password: 'password',
-      dancer: dancer.id
+      dancer: dancer._id
     });
+
+    console.log(user);
     const agent = request.agent(app);
 
     await agent
@@ -99,7 +111,12 @@ describe('auth routes', () => {
           _id: user.id.toString(),
           email: 'test@test.com',
           role: 'dancer',
-          dancer: user.dancer.toString(),
+          dancer: {
+            __v: 0,
+            name: 'Ali M',
+            _id: dancer._id.toString(),
+            teams: []
+          },
           __v: 0
         });
       });
