@@ -136,23 +136,23 @@ const seedData = async(testUsers) => {
       {
         dance: dances[0]._id,
         dancer: dancerUser.dancer,
-        levels: ['novice', 'novice',
-          'intermediate', 'intermediate',
-          'novice', 'novice']
+        levels: [0, 0,
+          1, 1,
+          0, 0]
       },
       {
         dance: dances[1]._id,
         dancer: dancers[0]._id,
-        levels: ['proficient', 'proficient',
-          'proficient', 'proficient',
-          'proficient', 'proficient',
-          'proficient', 'proficient']
+        levels: [2, 2,
+          2, 2,
+          2, 2,
+          2, 2]
       },
       {
         dance: dances[2]._id,
         dancer: dancers[5]._id,
-        levels: ['intermediate', 'proficient',
-          'proficient', 'intermediate']
+        levels: [1, 2,
+          2, 1]
       }
     ]
   );
