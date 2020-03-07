@@ -22,18 +22,18 @@ describe('competency routes', () => {
       .send({
         dance: dances[0]._id,
         dancer: dancerUser.dancer,
-        levels: ['novice', 'intermediate', 
-          'proficient', 'proficient', 
-          'intermediate', 'intermediate']
+        levels: [0, 1, 
+          2, 2, 
+          1, 1]
       })
       .then((res) => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           dance: dances[0]._id.toString(),
           dancer: dancerUser.dancer.toString(),
-          levels: ['novice', 'intermediate', 
-            'proficient', 'proficient', 
-            'intermediate', 'intermediate'],
+          levels: [0, 1, 
+            2, 2, 
+            1, 1],
           __v: 0
         });
       });
@@ -55,9 +55,9 @@ describe('competency routes', () => {
       .send({
         dance: dances[0]._id,
         dancer: dancers[4]._id,
-        levels: ['novice', 'intermediate', 
-          'proficient', 'proficient', 
-          'intermediate', 'intermediate']
+        levels: [0, 1, 
+          2, 2, 
+          1, 1]
       })
       .then((res) => {
         expect(res.body).toEqual({
@@ -74,9 +74,9 @@ describe('competency routes', () => {
       .send({
         dance: dances[0]._id,
         dancer: dancers[0]._id,
-        levels: ['novice', 'intermediate', 
-          'proficient', 'proficient', 
-          'intermediate', 'intermediate']
+        levels: [0, 1, 
+          2, 2, 
+          1, 1]
       })
       .then((res) => {
         expect(res.body).toEqual({
@@ -112,14 +112,14 @@ describe('competency routes', () => {
           },
           dancer: dancers[0]._id.toString(),
           levels: [
-            'proficient',
-            'proficient',
-            'proficient',
-            'proficient',
-            'proficient',
-            'proficient',
-            'proficient',
-            'proficient'
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
           ],
           __v: 0
         });
@@ -174,9 +174,9 @@ describe('competency routes', () => {
             tradition: 'Moulton',
           },
           dancer: dancerUser.dancer.toString(),
-          levels: ['novice', 'novice',
-            'intermediate', 'intermediate',
-            'novice', 'novice'],
+          levels: [0, 0,
+            1, 1,
+            0, 0],
           __v: 0
         });
       });
@@ -231,9 +231,9 @@ describe('competency routes', () => {
     return agent
       .patch(`/api/v1/competencies/${competencies[0].id}`)
       .send({ levels: [
-        'novice', 'intermediate',
-        'intermediate', 'intermediate',
-        'intermediate', 'novice'
+        0, 1,
+        1, 1,
+        1, 0
       ] })
       .then(res => {
         expect(res.body).toEqual({
@@ -247,9 +247,9 @@ describe('competency routes', () => {
             tradition: 'Moulton',
           },
           dancer: dancerUser.dancer.toString(),
-          levels: ['novice', 'intermediate',
-            'intermediate', 'intermediate',
-            'intermediate', 'novice'],
+          levels: [0, 1,
+            1, 1,
+            1, 0],
           __v: expect.any(Number)
         });
       });
@@ -268,7 +268,7 @@ describe('competency routes', () => {
 
     return agent
       .patch(`/api/v1/competencies/${competencies[2].id}`)
-      .send({ levels: ['novice', 'novice', 'novice', 'novice'] })
+      .send({ levels: [0, 0, 0, 0] })
       .then(res => {
         expect(res.body).toEqual({
           message: 'Access to that resource not allowed',
@@ -282,7 +282,7 @@ describe('competency routes', () => {
 
     return request(app)
       .patch(`/api/v1/competencies/${competencies[2].id}`)
-      .send({ levels: ['novice', 'novice', 'novice', 'novice'] })
+      .send({ levels: [0, 0, 0, 0] })
       .then(res => {
         expect(res.body).toEqual({
           message: 'Access to that resource not allowed',
@@ -317,9 +317,9 @@ describe('competency routes', () => {
             tradition: 'Moulton',
           },
           dancer: dancerUser.dancer.toString(),
-          levels: ['novice', 'novice',
-            'intermediate', 'intermediate',
-            'novice', 'novice'],
+          levels: [0, 0,
+            1, 1,
+            0, 0],
           __v: 0
         });
       });
