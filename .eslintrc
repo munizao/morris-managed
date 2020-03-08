@@ -72,6 +72,6 @@
         }
       }
     ],
-    "array-bracket-spacing": "error"
+    "array-bracket-spacing": "off"
   }
 }

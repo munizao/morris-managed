@@ -1,11 +1,11 @@
 {
-  "name": ".",
+  "name": "lab15",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest --verbose --runInBand",
-    "test:watch": "npm run test -- --watch",
+    "test": "jest --verbose --runInBand --testTimeout=15000",
+    "test:watch": "npm run test -- --watch --testTimeout=15000",
     "start": "node server.js",
     "start:watch": "nodemon server.js"
   },
@@ -23,8 +23,13 @@
     "supertest": "^4.0.2"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
+    "easy-rbac": "^3.1.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.3"
   }
 }
